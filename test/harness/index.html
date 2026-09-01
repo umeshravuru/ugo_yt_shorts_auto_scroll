@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Shorts Auto-Scroll test harness</title>
+<style>
+  body { font: 13px/1.5 ui-monospace, monospace; background: #111; color: #ddd; margin: 1rem; }
+  video { display: none; }
+  #navigation-button-down button { padding: 4px 10px; }
+</style>
+<h1>Shorts Auto-Scroll harness</h1>
+<p>
+  Simulates the YouTube Shorts player: looping videos, the next-video button,
+  and the real transition race (URL flips ~150ms after the click while the old
+  video keeps playing ~600ms more). <code>?v=old</code> runs the frozen buggy
+  script (<code>content_old.js</code>); otherwise the live
+  <code>/content.js</code> is tested. Results land in <code>window.__result</code>.
+</p>
+<div id="navigation-button-down"><button aria-label="Next video">Next ↓</button></div>
+<pre id="log"></pre>
+<script src="/test/harness/chrome-stub.js"></script>
+<script>
+  (() => {
+    const v = new URLSearchParams(location.search).get("v");
+    const src = v === "old" ? "/test/harness/content_old.js" : "/content.js";
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = () => {
+      const h = document.createElement("script");
+      h.src = "/test/harness/harness.js";
+      document.body.appendChild(h);
+    };
+    document.body.appendChild(s);
+  })();
+</script>
